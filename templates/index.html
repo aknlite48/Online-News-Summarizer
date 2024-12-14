@@ -3,86 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Summarization</title>
+    <title>AI Text Summarization</title>
     <style>
+        :root {
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --gradient-hover: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+            --gradient-background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gradient-background);
             margin: 0;
             padding: 0;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            color: #1e293b;
         }
+
         .container {
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            padding: 2.5rem;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             text-align: center;
         }
+
         h1 {
-            color: #333;
-            margin-bottom: 20px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
         }
+
+        h2 {
+            color: #475569;
+            font-size: 1.5rem;
+            margin-top: 2rem;
+        }
+
         textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             resize: none;
-            font-size: 16px;
+            font-size: 1rem;
             box-sizing: border-box;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            color: #334155;
+            line-height: 1.5;
         }
+
+        textarea:focus {
+            outline: none;
+            border-color: #818cf8;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
         button {
-            background-color: #007bff;
+            background: var(--gradient-primary);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 1rem 2rem;
+            border-radius: 12px;
             cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
         }
+
         button:hover {
-            background-color: #0056b3;
+            background: var(--gradient-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(99, 102, 241, 0.3);
         }
+
         #summaryOutput {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #555;
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: #475569;
             white-space: pre-wrap;
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            text-align: left;
+            line-height: 1.6;
         }
+
         .error {
-            color: red;
-            font-size: 14px;
+            color: #ef4444;
+            font-size: 0.975rem;
+            background: #fee2e2;
+            border-color: #fecaca;
+            padding: 1rem;
+        }
+
+        /* Loading animation */
+        .processing {
+            position: relative;
+            color: transparent;
+        }
+
+        .processing::after {
+            content: "Processing...";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: #6366f1;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive design */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem;
+                width: 95%;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Text Summarization</h1>
+        <h1>AI Text Summarization</h1>
         <form id="summarizationForm">
-            <textarea id="textInput" rows="10" placeholder="Enter text to summarize..."></textarea>
+            <textarea 
+                id="textInput" 
+                rows="10" 
+                placeholder="Enter your text here to generate an AI-powered summary..."
+            ></textarea>
             <br>
-            <button type="button" onclick="summarizeText()">Summarize</button>
+            <button type="button" onclick="summarizeText()">Generate Summary</button>
         </form>
-        <h2>Summary:</h2>
-        <p id="summaryOutput">Your summary will appear here...</p>
+        <h2>Generated Summary</h2>
+        <p id="summaryOutput">Your AI-generated summary will appear here...</p>
     </div>
 
     <script>
         async function summarizeText() {
             const text = document.getElementById("textInput").value;
             const summaryOutput = document.getElementById("summaryOutput");
-            summaryOutput.classList.remove("error");
+            summaryOutput.classList.remove("error", "processing");
 
             if (!text) {
                 summaryOutput.innerText = "Please enter some text to summarize.";
@@ -90,7 +178,8 @@
                 return;
             }
 
-            summaryOutput.innerText = "Processing...";
+            summaryOutput.classList.add("processing");
+            summaryOutput.innerText = "Generating summary...";
 
             try {
                 const response = await fetch("/summarize", {
@@ -103,15 +192,18 @@
 
                 if (response.ok) {
                     const data = await response.json();
+                    summaryOutput.classList.remove("processing");
                     summaryOutput.innerText = data.summary;
                 } else {
                     const error = await response.json();
-                    summaryOutput.innerText = error.error || "An error occurred while summarizing the text.";
+                    summaryOutput.classList.remove("processing");
                     summaryOutput.classList.add("error");
+                    summaryOutput.innerText = error.error || "An error occurred while summarizing the text.";
                 }
             } catch (err) {
-                summaryOutput.innerText = "Failed to connect to the server. Please try again later.";
+                summaryOutput.classList.remove("processing");
                 summaryOutput.classList.add("error");
+                summaryOutput.innerText = "Failed to connect to the server. Please try again later.";
             }
         }
     </script>
