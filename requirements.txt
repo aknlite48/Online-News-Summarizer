@@ -1,0 +1,6 @@
+torch
+transformers
+Flask
+requests
+beautifulsoup4
+SentencePiece

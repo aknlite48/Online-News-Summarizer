@@ -8,7 +8,7 @@ import re
 from urllib.parse import urlparse
 
 # Load the fine-tuned model and tokenizer
-model_path = "./t5-summarizer"  # Path to the saved model
+model_path = "t5-small"  # Path to the saved model
 tokenizer = T5Tokenizer.from_pretrained(model_path)
 model = T5ForConditionalGeneration.from_pretrained(model_path)
 
