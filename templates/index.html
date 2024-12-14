@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Summarization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #summaryOutput {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+            white-space: pre-wrap;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Text Summarization</h1>
+        <form id="summarizationForm">
+            <textarea id="textInput" rows="10" placeholder="Enter text to summarize..."></textarea>
+            <br>
+            <button type="button" onclick="summarizeText()">Summarize</button>
+        </form>
+        <h2>Summary:</h2>
+        <p id="summaryOutput">Your summary will appear here...</p>
+    </div>
+
+    <script>
+        async function summarizeText() {
+            const text = document.getElementById("textInput").value;
+            const summaryOutput = document.getElementById("summaryOutput");
+            summaryOutput.classList.remove("error");
+
+            if (!text) {
+                summaryOutput.innerText = "Please enter some text to summarize.";
+                summaryOutput.classList.add("error");
+                return;
+            }
+
+            summaryOutput.innerText = "Processing...";
+
+            try {
+                const response = await fetch("/summarize", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ text })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    summaryOutput.innerText = data.summary;
+                } else {
+                    const error = await response.json();
+                    summaryOutput.innerText = error.error || "An error occurred while summarizing the text.";
+                    summaryOutput.classList.add("error");
+                }
+            } catch (err) {
+                summaryOutput.innerText = "Failed to connect to the server. Please try again later.";
+                summaryOutput.classList.add("error");
+            }
+        }
+    </script>
+</body>
+</html>
