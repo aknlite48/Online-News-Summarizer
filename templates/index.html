@@ -1,47 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Previous head content remains the same -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Text Summarization</title>
     <style>
-        /* Previous styles remain the same until .ai-message */
         :root {
-            --gradient-primary: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --gradient-hover: linear-gradient(135deg, #059669 0%, #047857 100%);
-            --background-dark: #0f172a;
-            --card-dark: #1e293b;
-            --text-primary: #e2e8f0;
-            --text-secondary: #94a3b8;
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #ffffff 100%);
+            --gradient-hover: linear-gradient(135deg, #2563eb 0%, #f8fafc 100%);
+            --gradient-text: linear-gradient(135deg, #1d4ed8 0%, #f1f5f9 90%);
+            --background-dark: #030712;
+            --card-dark: #111827;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            --button-glow: 0 0 15px rgba(59, 130, 246, 0.5);
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--background-dark);
             margin: 0;
-            padding: 0;
+            padding: 2rem;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             color: var(--text-primary);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(96, 165, 250, 0.1) 0%, transparent 20%);
         }
 
         .container {
             background: var(--card-dark);
-            border-radius: 16px;
+            border-radius: 24px;
             box-shadow: var(--shadow-lg);
             padding: 2.5rem;
             width: 90%;
             max-width: 700px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            opacity: 0.5;
         }
 
         h1 {
-            background: var(--gradient-primary);
+            background: var(--gradient-text);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -51,34 +67,39 @@
         }
 
         h2 {
-            color: var(--text-secondary);
+            background: var(--gradient-text);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             font-size: 1.5rem;
             margin-top: 2rem;
+            opacity: 0.9;
         }
 
         textarea {
             width: 100%;
             padding: 1rem;
-            border: 2px solid #334155;
-            border-radius: 12px;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            border-radius: 16px;
             resize: none;
             font-size: 1rem;
             box-sizing: border-box;
             transition: all 0.3s ease;
-            background: #0f172a;
+            background: rgba(15, 23, 42, 0.6);
             color: var(--text-primary);
             line-height: 1.5;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         textarea:focus {
             outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         button {
             background: var(--gradient-primary);
-            color: white;
+            color: var(--card-dark);
             border: none;
             padding: 1rem 2rem;
             border-radius: 12px;
@@ -87,13 +108,13 @@
             font-weight: 600;
             margin-top: 1.5rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+            box-shadow: var(--button-glow);
         }
 
         button:hover {
             background: var(--gradient-hover);
             transform: translateY(-1px);
-            box-shadow: 0 6px 8px -1px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
         }
 
         #summaryOutput {
@@ -101,30 +122,29 @@
             font-size: 1.1rem;
             color: var(--text-primary);
             white-space: pre-wrap;
-            background: #0f172a;
+            background: rgba(15, 23, 42, 0.6);
             padding: 1.5rem;
-            border-radius: 12px;
-            border: 2px solid #334155;
+            border-radius: 16px;
+            border: 2px solid rgba(59, 130, 246, 0.2);
             text-align: left;
             line-height: 1.6;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .error {
-            color: #ef4444;
+            color: #f87171;
             font-size: 0.975rem;
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.2);
+            background: rgba(248, 113, 113, 0.1);
+            border-color: rgba(248, 113, 113, 0.2);
             padding: 1rem;
         }
-
-        /* Removed .ai-message styles that created the icon */
 
         .typing-indicator {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(59, 130, 246, 0.1);
             border-radius: 1rem;
             margin-top: 1rem;
         }
@@ -132,7 +152,7 @@
         .typing-dot {
             width: 0.5rem;
             height: 0.5rem;
-            background: #10b981;
+            background: #60a5fa;
             border-radius: 50%;
             animation: typingAnimation 1.4s infinite;
         }
@@ -146,6 +166,10 @@
         }
 
         @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
+            
             .container {
                 padding: 1.5rem;
                 width: 95%;
@@ -189,7 +213,6 @@
                 return;
             }
 
-            // Show typing indicator
             summaryOutput.innerHTML = `
                 <div class="typing-indicator">
                     <div class="typing-dot"></div>
@@ -229,7 +252,7 @@
                 if (index < text.length) {
                     element.innerText += text.charAt(index);
                     index++;
-                    setTimeout(type, 20); // Adjust speed here
+                    setTimeout(type, 20);
                 }
             }
             
