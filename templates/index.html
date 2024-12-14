@@ -1,38 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Previous head content remains the same -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Text Summarization</title>
     <style>
+        /* Previous styles remain the same until .ai-message */
         :root {
-            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            --gradient-hover: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
-            --gradient-background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --gradient-primary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-hover: linear-gradient(135deg, #059669 0%, #047857 100%);
+            --background-dark: #0f172a;
+            --card-dark: #1e293b;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--gradient-background);
+            background: var(--background-dark);
             margin: 0;
             padding: 0;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #1e293b;
+            color: var(--text-primary);
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: var(--card-dark);
             border-radius: 16px;
             box-shadow: var(--shadow-lg);
             padding: 2.5rem;
             width: 90%;
             max-width: 700px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         h1 {
@@ -46,7 +51,7 @@
         }
 
         h2 {
-            color: #475569;
+            color: var(--text-secondary);
             font-size: 1.5rem;
             margin-top: 2rem;
         }
@@ -54,21 +59,21 @@
         textarea {
             width: 100%;
             padding: 1rem;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #334155;
             border-radius: 12px;
             resize: none;
             font-size: 1rem;
             box-sizing: border-box;
             transition: all 0.3s ease;
-            background: #f8fafc;
-            color: #334155;
+            background: #0f172a;
+            color: var(--text-primary);
             line-height: 1.5;
         }
 
         textarea:focus {
             outline: none;
-            border-color: #818cf8;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
         button {
@@ -82,24 +87,24 @@
             font-weight: 600;
             margin-top: 1.5rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
         }
 
         button:hover {
             background: var(--gradient-hover);
             transform: translateY(-1px);
-            box-shadow: 0 6px 8px -1px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 6px 8px -1px rgba(16, 185, 129, 0.3);
         }
 
         #summaryOutput {
             margin-top: 1.5rem;
             font-size: 1.1rem;
-            color: #475569;
+            color: var(--text-primary);
             white-space: pre-wrap;
-            background: #f8fafc;
+            background: #0f172a;
             padding: 1.5rem;
             border-radius: 12px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #334155;
             text-align: left;
             line-height: 1.6;
         }
@@ -107,33 +112,39 @@
         .error {
             color: #ef4444;
             font-size: 0.975rem;
-            background: #fee2e2;
-            border-color: #fecaca;
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
             padding: 1rem;
         }
 
-        /* Loading animation */
-        .processing {
-            position: relative;
-            color: transparent;
+        /* Removed .ai-message styles that created the icon */
+
+        .typing-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 1rem;
+            margin-top: 1rem;
         }
 
-        .processing::after {
-            content: "Processing...";
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            color: #6366f1;
-            animation: pulse 1.5s ease-in-out infinite;
+        .typing-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background: #10b981;
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
         }
 
-        /* Responsive design */
         @media (max-width: 640px) {
             .container {
                 padding: 1.5rem;
@@ -163,14 +174,14 @@
             <button type="button" onclick="summarizeText()">Generate Summary</button>
         </form>
         <h2>Generated Summary</h2>
-        <p id="summaryOutput">Your AI-generated summary will appear here...</p>
+        <div id="summaryOutput">Your AI-generated summary will appear here...</div>
     </div>
 
     <script>
         async function summarizeText() {
             const text = document.getElementById("textInput").value;
             const summaryOutput = document.getElementById("summaryOutput");
-            summaryOutput.classList.remove("error", "processing");
+            summaryOutput.classList.remove("error");
 
             if (!text) {
                 summaryOutput.innerText = "Please enter some text to summarize.";
@@ -178,8 +189,14 @@
                 return;
             }
 
-            summaryOutput.classList.add("processing");
-            summaryOutput.innerText = "Generating summary...";
+            // Show typing indicator
+            summaryOutput.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
 
             try {
                 const response = await fetch("/summarize", {
@@ -192,19 +209,31 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    summaryOutput.classList.remove("processing");
-                    summaryOutput.innerText = data.summary;
+                    typeText(summaryOutput, data.summary);
                 } else {
                     const error = await response.json();
-                    summaryOutput.classList.remove("processing");
                     summaryOutput.classList.add("error");
                     summaryOutput.innerText = error.error || "An error occurred while summarizing the text.";
                 }
             } catch (err) {
-                summaryOutput.classList.remove("processing");
                 summaryOutput.classList.add("error");
                 summaryOutput.innerText = "Failed to connect to the server. Please try again later.";
             }
+        }
+
+        function typeText(element, text) {
+            let index = 0;
+            element.innerText = "";
+            
+            function type() {
+                if (index < text.length) {
+                    element.innerText += text.charAt(index);
+                    index++;
+                    setTimeout(type, 20); // Adjust speed here
+                }
+            }
+            
+            type();
         }
     </script>
 </body>
