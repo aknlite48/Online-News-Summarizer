@@ -1,10 +1,10 @@
-#Setting up virtual environment
+# Setting up virtual environment
 python3 -m venv venv \
 source venv/bin/activate \
 
-#Install packages and launch program
+# Install packages and launch program
 pip install -r requirements.txt \
 python app.py \
 
-#Closing virtual environment
+# Closing virtual environment
 deactivate
